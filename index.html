@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Vintage · com edição</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ─── Mesmo estilo vintage que você aprovou ─── */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            min-height:100vh;
+            background:#e8ddd0;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(200,180,160,0.2) 0%, transparent 60%),
+                              radial-gradient(ellipse at 80% 20%, rgba(180,160,140,0.15) 0%, transparent 50%),
+                              repeating-linear-gradient(45deg, rgba(180,160,140,0.03) 0px, rgba(180,160,140,0.03) 2px, transparent 2px, transparent 6px);
+            display:flex; justify-content:center; align-items:center; padding:2rem 1rem;
+            font-family:'Cormorant Garamond', serif; color:#4d3e2e;
+        }
+        .agenda {
+            max-width:820px; width:100%;
+            background:#f5ede3;
+            background-image: linear-gradient(145deg, rgba(235,220,200,0.4) 0%, rgba(245,237,227,0.9) 100%),
+                              repeating-linear-gradient(0deg, rgba(180,160,140,0.06) 0px, rgba(180,160,140,0.06) 1px, transparent 1px, transparent 4px);
+            border-radius:48px 48px 32px 32px;
+            box-shadow: 0 20px 40px -12px rgba(60,40,20,0.25), inset 0 1px 4px rgba(255,245,230,0.8), inset 0 -2px 8px rgba(120,90,60,0.10);
+            padding:2.2rem 2rem 2.5rem;
+            border:1px solid #dacfbe;
+            position:relative;
+        }
+        .agenda::before {
+            content:"❧ ✿ ❧";
+            display:block; text-align:center; font-size:1.4rem; letter-spacing:12px;
+            color:#b8a084; opacity:0.5; margin-top:-0.8rem; margin-bottom:0.2rem;
+            font-family:'Great Vibes', cursive;
+        }
+        .cabecalho {
+            display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline;
+            border-bottom:1px dashed #cbbaa8; padding-bottom:0.6rem; margin-bottom:1.8rem;
+        }
+        .cabecalho h1 {
+            font-family:'Great Vibes', cursive; font-weight:400; font-size:2.8rem;
+            letter-spacing:2px; color:#6b5540;
+            text-shadow:0 1px 0 #ede3d6, 0 2px 4px rgba(100,70,40,0.10);
+            transform:rotate(-0.5deg); line-height:1.1;
+        }
+        .cabecalho .data-atual {
+            font-size:1.2rem; font-style:italic; color:#8f7a64;
+            background:rgba(200,180,160,0.15); padding:0.2rem 1rem; border-radius:40px;
+            border:1px solid #dacfc0; backdrop-filter:blur(2px); letter-spacing:0.4px;
+        }
+        .form-evento {
+            background:rgba(235,222,208,0.3); border-radius:32px; padding:1.5rem 1.8rem 1.8rem;
+            margin-bottom:2rem; border:1px solid #dccfc0;
+            box-shadow:inset 0 2px 6px rgba(160,130,100,0.06); backdrop-filter:blur(2px);
+        }
+        .form-evento .linha {
+            display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem;
+        }
+        .form-evento .grupo {
+            flex:1 1 150px; display:flex; flex-direction:column; gap:0.2rem;
+        }
+        .form-evento .grupo.grupo-titulo { flex:2 1 200px; }
+        .form-evento label {
+            font-size:0.85rem; text-transform:uppercase; letter-spacing:2px;
+            color:#8f7a64; font-weight:600; opacity:0.8;
+        }
+        .form-evento input, .form-evento textarea {
+            background:#fcf8f2; border:1px solid #dacfc0; border-radius:40px;
+            padding:0.6rem 1.2rem; font-family:'Cormorant Garamond', serif; font-size:1rem;
+            color:#3f3224; transition:all 0.2s;
+            box-shadow:inset 0 2px 4px rgba(140,110,80,0.04); outline:none; width:100%;
+        }
+        .form-evento input:focus, .form-evento textarea:focus {
+            border-color:#b8a084;
+            box-shadow:0 0 0 3px rgba(180,150,120,0.15), inset 0 2px 4px rgba(140,110,80,0.06);
+            background:#fffcf7;
+        }
+        .form-evento textarea { border-radius:24px; resize:vertical; min-height:44px; padding-top:0.6rem; }
+        .form-evento .botoes-form {
+            display:flex; flex-wrap:wrap; align-items:center; gap:0.8rem;
+            margin-top:0.6rem; justify-content:flex-end;
+        }
+        .btn {
+            border:none; background:#dacfc0; color:#4d3e2e; padding:0.5rem 1.8rem;
+            border-radius:40px; font-family:'Cormorant Garamond', serif; font-weight:600;
+            font-size:1.05rem; letter-spacing:0.5px; cursor:pointer; transition:all 0.2s;
+            box-shadow:0 2px 6px rgba(100,70,40,0.08); border:1px solid #cfc0ae;
+            backdrop-filter:blur(2px);
+        }
+        .btn:hover { background:#cbbaa8; transform:translateY(-1px); box-shadow:0 6px 12px rgba(100,70,40,0.12); }
+        .btn:active { transform:scale(0.97); }
+        .btn-principal { background:#b8a084; color:#fcf8f2; border-color:#a68b72; }
+        .btn-principal:hover { background:#a68b72; }
+        .btn-secundario { background:transparent; border-color:#cbbaa8; color:#6b5540; }
+        .btn-secundario:hover { background:rgba(200,180,160,0.15); }
+        .lista-eventos { margin-top:0.6rem; }
+        .lista-eventos .cabecalho-lista {
+            display:flex; justify-content:space-between; align-items:baseline;
+            margin-bottom:0.8rem; flex-wrap:wrap;
+        }
+        .lista-eventos .cabecalho-lista h2 {
+            font-family:'Great Vibes', cursive; font-weight:400; font-size:2rem;
+            color:#6b5540; letter-spacing:1px; opacity:0.8;
+        }
+        .lista-eventos .cabecalho-lista span {
+            font-size:0.95rem; color:#8f7a64; font-style:italic;
+            background:rgba(200,180,160,0.15); padding:0.1rem 1rem; border-radius:40px;
+        }
+        .evento-item {
+            background:rgba(250,242,232,0.6); backdrop-filter:blur(2px); border-radius:28px;
+            padding:0.8rem 1.4rem 0.8rem 1.8rem; margin-bottom:0.7rem;
+            border:1px solid #dccfc0; display:flex; flex-wrap:wrap; align-items:center;
+            justify-content:space-between; gap:0.6rem 1rem; transition:all 0.15s;
+            box-shadow:0 2px 6px rgba(120,90,60,0.04);
+        }
+        .evento-item:hover { background:rgba(250,242,232,0.85); border-color:#cbbaa8; }
+        .evento-item .info {
+            display:flex; flex-wrap:wrap; align-items:baseline; gap:0.4rem 1.2rem;
+            flex:2 1 240px;
+        }
+        .evento-item .info .titulo {
+            font-size:1.2rem; font-weight:600; color:#4d3e2e; letter-spacing:0.3px;
+        }
+        .evento-item .info .data-hora {
+            font-size:0.95rem; color:#8f7a64; font-style:italic;
+            background:rgba(200,180,160,0.15); padding:0.05rem 0.8rem; border-radius:30px;
+            border:1px solid #dccfc0; white-space:nowrap;
+        }
+        .evento-item .info .descricao {
+            font-size:0.95rem; color:#6b5540; opacity:0.8; width:100%; margin-top:0.1rem;
+            padding-left:0.8rem; border-left:2px solid #dccfc0; font-style:italic;
+        }
+        .evento-item .acoes {
+            display:flex; gap:0.4rem; flex-wrap:wrap;
+        }
+        .evento-item .acoes .btn {
+            padding:0.2rem 1rem; font-size:0.85rem; background:transparent; border-color:#dccfc0;
+        }
+        .evento-item .acoes .btn-editar { color:#6b5540; }
+        .evento-item .acoes .btn-editar:hover { background:rgba(180,150,120,0.12); border-color:#b8a084; }
+        .evento-item .acoes .btn-excluir-item { color:#8f5a4a; border-color:#dbb8a8; }
+        .evento-item .acoes .btn-excluir-item:hover { background:rgba(200,120,100,0.10); border-color:#c9a794; }
+        .vazio {
+            text-align:center; font-style:italic; color:#b8a084; padding:1.8rem 0.5rem;
+            font-size:1.2rem; letter-spacing:1px; border:1px dashed #dccfc0;
+            border-radius:60px; background:rgba(240,228,214,0.2);
+        }
+        .mensagem-feedback {
+            background:rgba(180,150,120,0.12); color:#5f4a34; padding:0.3rem 1.2rem;
+            border-radius:40px; font-style:italic; border:1px solid #cbbaa8;
+            display:inline-block; font-size:0.95rem; opacity:0.9; transition:opacity 0.3s;
+        }
+        .floreio {
+            text-align:center; font-size:1rem; color:#b8a084; opacity:0.25;
+            margin-top:1.2rem; letter-spacing:6px; font-family:'Great Vibes', cursive;
+        }
+        .floreio::before { content:"✿  ✿  ✿"; }
+        @media (max-width:600px) {
+            .agenda { padding:1.5rem 1rem 1.8rem; border-radius:32px; }
+            .cabecalho h1 { font-size:2.2rem; }
+            .form-evento { padding:1rem 1rem 1.4rem; }
+            .form-evento .grupo { flex:1 1 100%; }
+            .evento-item { flex-direction:column; align-items:stretch; padding:1rem 1.2rem; }
+            .evento-item .info .data-hora { white-space:normal; }
+            .evento-item .acoes { justify-content:flex-end; margin-top:0.2rem; }
+            .btn { padding:0.4rem 1.2rem; font-size:0.95rem; }
+        }
+        @media (max-width:420px) {
+            .cabecalho { flex-direction:column; align-items:center; gap:0.2rem; }
+            .cabecalho h1 { font-size:2rem; }
+            .form-evento .botoes-form { justify-content:center; }
+        }
+    </style>
+</head>
+<body>
+<div class="agenda">
+    <header class="cabecalho">
+        <h1>Agenda Particular</h1>
+        <span class="data-atual" id="dataAtual"></span>
+    </header>
+
+    <section class="form-evento">
+        <form id="formEvento" novalidate>
+            <div class="linha">
+                <div class="grupo grupo-titulo">
+                    <label for="titulo">Compromisso *</label>
+                    <input type="text" id="titulo" placeholder="Ex.: Reunião com clientes" required>
+                </div>
+                <div class="grupo">
+                    <label for="data">Data *</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="grupo">
+                    <label for="hora">Hora</label>
+                    <input type="time" id="hora">
+                </div>
+            </div>
+            <div class="linha" style="margin-top:0.6rem;">
+                <div class="grupo" style="flex:3;">
+                    <label for="descricao">Descrição (opcional)</label>
+                    <textarea id="descricao" rows="1" placeholder="Detalhes do compromisso…"></textarea>
+                </div>
+            </div>
+            <div class="botoes-form">
+                <button type="submit" class="btn btn-principal" id="btnSalvar">✎ Salvar</button>
+                <button type="button" class="btn btn-secundario" id="btnCancelar">Cancelar</button>
+                <input type="hidden" id="idEdicao" value="">
+                <span id="feedback" class="mensagem-feedback" style="display:none;"></span>
+            </div>
+        </form>
+    </section>
+
+    <section class="lista-eventos">
+        <div class="cabecalho-lista">
+            <h2>Meus dias</h2>
+            <span id="contadorEventos">0 eventos</span>
+        </div>
+        <div id="listaContainer"></div>
+        <div class="floreio"></div>
+    </section>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ─── Elementos DOM ────────────────────────────────
+        const form = document.getElementById('formEvento');
+        const inputTitulo = document.getElementById('titulo');
+        const inputData = document.getElementById('data');
+        const inputHora = document.getElementById('hora');
+        const inputDescricao = document.getElementById('descricao');
+        const inputIdEdicao = document.getElementById('idEdicao');
+        const btnSalvar = document.getElementById('btnSalvar');
+        const btnCancelar = document.getElementById('btnCancelar');
+        const listaContainer = document.getElementById('listaContainer');
+        const contadorSpan = document.getElementById('contadorEventos');
+        const dataAtualSpan = document.getElementById('dataAtual');
+        const feedbackSpan = document.getElementById('feedback');
+
+        const STORAGE_KEY = 'agenda_vintage_eventos';
+
+        // ─── Data atual ────────────────────────────────────
+        function atualizarDataAtual() {
+            const agora = new Date();
+            dataAtualSpan.textContent = agora.toLocaleDateString('pt-BR', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+        atualizarDataAtual();
+        setInterval(atualizarDataAtual, 60000);
+
+        // ─── LocalStorage ──────────────────────────────────
+        function carregarEventos() {
+            try {
+                const dados = localStorage.getItem(STORAGE_KEY);
+                return dados ? JSON.parse(dados) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function salvarEventos(eventos) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(eventos));
+        }
+
+        // ─── Renderizar lista ─────────────────────────────
+        function renderizar() {
+            const eventos = carregarEventos();
+            eventos.sort((a, b) => {
+                if (a.data !== b.data) return a.data.localeCompare(b.data);
+                return (a.hora || '00:00').localeCompare(b.hora || '00:00');
+            });
+
+            if (eventos.length === 0) {
+                listaContainer.innerHTML = `<div class="vazio">✧ Nenhum compromisso agendado ✧</div>`;
+                contadorSpan.textContent = '0 eventos';
+                return;
+            }
+
+            contadorSpan.textContent = `${eventos.length} evento${eventos.length > 1 ? 's' : ''}`;
+
+            let html = '';
+            eventos.forEach(ev => {
+                const dataFormatada = ev.data ? new Date(ev.data + 'T00:00:00').toLocaleDateString('pt-BR', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                }) : '—';
+                const horaExib = ev.hora || '—';
+                const desc = ev.descricao ? ev.descricao : '';
+
+                html += `
+                    <div class="evento-item" data-id="${ev.id}">
+                        <div class="info">
+                            <span class="titulo">${escapeHtml(ev.titulo)}</span>
+                            <span class="data-hora">${dataFormatada} · ${horaExib}</span>
+                            ${desc ? `<span class="descricao">${escapeHtml(desc)}</span>` : ''}
+                        </div>
+                        <div class="acoes">
+                            <button class="btn btn-editar" data-id="${ev.id}" data-acao="editar">✎ editar</button>
+                            <button class="btn btn-excluir-item" data-id="${ev.id}" data-acao="excluir">✕ excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listaContainer.innerHTML = html;
+
+            // Delegação de eventos para os botões
+            listaContainer.querySelectorAll('[data-acao="editar"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    editarEvento(id);
+                });
+            });
+            listaContainer.querySelectorAll('[data-acao="excluir"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    excluirEvento(id);
+                });
+            });
+        }
+
+        // ─── Utilitários ──────────────────────────────────
+        function escapeHtml(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function gerarId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function mostrarFeedback(mensagem, tipo = 'sucesso') {
+            feedbackSpan.textContent = mensagem;
+            feedbackSpan.style.display = 'inline-block';
+            feedbackSpan.style.opacity = '1';
+            if (tipo === 'erro') {
+                feedbackSpan.style.background = 'rgba(200,120,100,0.15)';
+                feedbackSpan.style.color = '#7a4a3a';
+            } else {
+                feedbackSpan.style.background = 'rgba(180,150,120,0.12)';
+                feedbackSpan.style.color = '#5f4a34';
+            }
+            setTimeout(() => {
+                feedbackSpan.style.opacity = '0';
+                setTimeout(() => { feedbackSpan.style.display = 'none'; }, 300);
+            }, 2500);
+        }
+
+        // ─── Limpar formulário ────────────────────────────
+        function limparFormulario() {
+            form.reset();
+            inputIdEdicao.value = '';
+            btnSalvar.textContent = '✎ Salvar';
+            // data padrão = hoje
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            inputData.value = `${ano}-${mes}-${dia}`;
+            inputHora.value = '';
+            inputTitulo.focus();
+            feedbackSpan.style.display = 'none';
+        }
+
+        // ─── Salvar (adicionar ou atualizar) ──────────────
+        function salvarEvento(evento) {
+            let eventos = carregarEventos();
+
+            if (evento.id) {
+                // Edição: substitui o evento existente
+                const index = eventos.findIndex(e => e.id === evento.id);
+                if (index !== -1) {
+                    eventos[index] = evento;
+                } else {
+                    // fallback: se não achar, adiciona como novo
+                    evento.id = gerarId();
+                    eventos.push(evento);
+                }
+            } else {
+                // Novo
+                evento.id = gerarId();
+                eventos.push(evento);
+            }
+
+            salvarEventos(eventos);
+            renderizar();
+            limparFormulario();
+            mostrarFeedback('✓ Compromisso salvo com sucesso!');
+        }
+
+        // ─── Editar ────────────────────────────────────────
+        function editarEvento(id) {
+            const eventos = carregarEventos();
+            const evento = eventos.find(e => e.id === id);
+            if (!evento) {
+                mostrarFeedback('❌ Evento não encontrado', 'erro');
+                return;
+            }
+
+            inputTitulo.value = evento.titulo || '';
+            inputData.value = evento.data || '';
+            inputHora.value = evento.hora || '';
+            inputDescricao.value = evento.descricao || '';
+            inputIdEdicao.value = evento.id;
+            btnSalvar.textContent = '✎ Atualizar';
+            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            inputTitulo.focus();
+            feedbackSpan.style.display = 'none';
+        }
+
+        // ─── Excluir ──────────────────────────────────────
+        function excluirEvento(id) {
+            if (!confirm('Tem certeza que deseja excluir este compromisso?')) return;
+            let eventos = carregarEventos();
+            eventos = eventos.filter(e => e.id !== id);
+            salvarEventos(eventos);
+            renderizar();
+            if (inputIdEdicao.value === id) {
+                limparFormulario();
+            }
+            mostrarFeedback('✕ Compromisso removido');
+        }
+
+        // ─── Submit do formulário ─────────────────────────
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const titulo = inputTitulo.value.trim();
+            if (!titulo) {
+                mostrarFeedback('❌ O título é obrigatório', 'erro');
+                inputTitulo.focus();
+                return;
+            }
+
+            const data = inputData.value;
+            if (!data) {
+                mostrarFeedback('❌ A data é obrigatória', 'erro');
+                inputData.focus();
+                return;
+            }
+
+            const hora = inputHora.value || '';
+            const descricao = inputDescricao.value.trim();
+            const id = inputIdEdicao.value || '';
+
+            const evento = {
+                id: id,
+                titulo: titulo,
+                data: data,
+                hora: hora,
+                descricao: descricao
+            };
+
+            salvarEvento(evento);
+        });
+
+        // ─── Cancelar ──────────────────────────────────────
+        btnCancelar.addEventListener('click', function() {
+            limparFormulario();
+            // Se houver edição em andamento, cancela e volta à lista normal
+            renderizar(); // sincroniza visual
+        });
+
+        // ─── Inicialização ─────────────────────────────────
+        // Data padrão no campo
+        (function dataPadrao() {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            inputData.value = `${ano}-${mes}-${dia}`;
+        })();
+
+        renderizar();
+
+        // Teste de disponibilidade do localStorage
+        try {
+            localStorage.setItem('teste_vintage', 'ok');
+            localStorage.removeItem('teste_vintage');
+        } catch (e) {
+            alert('⚠️ Seu navegador bloqueia o armazenamento local. Os compromissos NÃO serão salvos. Permita o uso de localStorage para esta página.');
+        }
+
+    })();
+</script>
+</body>
+</html>
